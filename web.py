@@ -474,9 +474,9 @@ st.markdown("""
         flex: 1 1 200px;
     }
     /* Hide Streamlit Toolbar */
-    #MainMenu {visibility: ;}
+    #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: ;}
+    header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
