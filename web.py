@@ -361,6 +361,15 @@ st.markdown("""
             padding: 1rem;
         }
     }
+        /* Hide Streamlit elements */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+
+    /* Adjust the app container to fill the screen */
+    .stApp {
+        margin-top: -80px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
