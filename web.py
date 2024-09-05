@@ -366,9 +366,9 @@ st.markdown("""
     }
 
     /* Hide Streamlit elements */
-    #MainMenu {visibility: ;}
+    #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: ;}
+    header {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
