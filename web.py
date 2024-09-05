@@ -142,10 +142,10 @@ st.markdown("""
     [data-testid="stSidebar"] {
         background: linear-gradient(
             45deg,
-            rgba(72, 52, 212, 0.7),
-            rgba(48, 51, 107, 0.7),
-            rgba(95, 39, 205, 0.7),
-            rgba(87, 75, 144, 0.7)
+            rgba(72, 52, 212, 1),
+            rgba(48, 51, 107, 1),
+            rgba(95, 39, 205, 1),
+            rgba(87, 75, 144, 1)
         ) !important;
         background-size: 400% 400% !important;
         animation: gradientShift 15s ease infinite !important;
