@@ -142,8 +142,8 @@ st.markdown("""
     [data-testid="stSidebar"] {
         background: linear-gradient(
             45deg,
-            rgba(76, 175, 80, 0.9),  /* Green */
-            rgba(33, 150, 243, 0.9)  /* Blue */
+            rgba(76, 175, 80, 0.95),  /* Green */
+            rgba(33, 150, 243, 0.95)  /* Blue */
         ) !important;
         background-size: 200% 200% !important;
         animation: gradientShift 15s ease infinite !important;
@@ -314,14 +314,6 @@ st.markdown("""
         margin-bottom: 10px !important;
     }
 
-    .sidebar .stForm {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 15px;
-        border-radius: 10px;
-    }
-
-    .sidebar .stForm > div {
-        margin-bottom: 15px !important;
     }
     [data-testid="stSidebar"] .element-container,
     [data-testid="stSidebar"] .stTextInput,
@@ -386,8 +378,8 @@ st.markdown("""
     [data-testid="stSidebar"] .stSelectbox select,
     [data-testid="stSidebar"] .stDateInput input {
         color: #ffffff !important;
-        background-color: rgba(0, 0, 0, 0.2) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background-color: rgba(0, 0, 0, 1) !important;
+        border: 1px solid rgba(255, 255, 255, 1) !important;
     }
 
     /* Style for placeholder text */
@@ -463,6 +455,24 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    .sidebar-title {
+    animation: pulse-sidebar 2s infinite;
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+}
+
+@keyframes pulse-sidebar {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
