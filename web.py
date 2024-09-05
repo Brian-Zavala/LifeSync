@@ -182,64 +182,73 @@ st.markdown("""
         opacity: 1;
     }
     /* Glowing animated input styles for sidebar */
-    @keyframes glowing {
-        0% { background-position: 0 0; }
-        50% { background-position: 400% 0; }
-        100% { background-position: 0 0; }
-    }
+  @keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+  }
 
-    [data-testid="stSidebar"] .stTextInput input,
-    [data-testid="stSidebar"] .stSelectbox select,
-    [data-testid="stSidebar"] .stDateInput input {
-        color: #ffffff !important;
-        background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
-        background-size: 400% 400%;
-        border: none !important;
-        border-radius: 5px;
-        padding: 10px 15px;
-        transition: all 120s ease;
-        animation: glowing 90s ease infinite;
-    }
+  [data-testid="stSidebar"] .stTextInput input,
+  [data-testid="stSidebar"] .stDateInput input {
+    color: #000000 !important;
+    background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
+    background-size: 400% 400%;
+    border: none !important;
+    border-radius: 5px;
+    padding: 5px 15px;
+    transition: all 120s ease;
+    animation: glowing 90s ease infinite;
+  }
 
-    [data-testid="stSidebar"] .stTextInput input::placeholder,
-    [data-testid="stSidebar"] .stSelectbox select::placeholder,
-    [data-testid="stSidebar"] .stDateInput input::placeholder {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
+  [data-testid="stSidebar"] .stTextInput input::placeholder,
+  [data-testid="stSidebar"] .stDateInput input::placeholder {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
 
-    [data-testid="stSidebar"] .stTextInput input:focus,
-    [data-testid="stSidebar"] .stSelectbox select:focus,
-    [data-testid="stSidebar"] .stDateInput input:focus {
-        outline: none;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    }
+  [data-testid="stSidebar"] .stTextInput input:focus,
+  [data-testid="stSidebar"] .stDateInput input:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
 
-    /* Style for dropdown options */
-    [data-testid="stSidebar"] .stSelectbox option {
-        background-color: #2c3e50;
-        color: #ffffff;
-    }
+  /* Style for priority and category selectboxes */
+  [data-testid="stSidebar"] div[data-baseweb="select"] {
+    background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
+    background-size: 400% 400%;
+    border: none !important;
+    border-radius: 5px;
+    padding: 10px 15px;
+    transition: all 120s ease;
+    animation: glowing 90s ease infinite;
+  }
 
-    /* Style for labels */
-    [data-testid="stSidebar"] label {
-        color: #ffffff !important;
-        font-weight: 500;
-        margin-bottom: 5px;
-        display: block;
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    }
+  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"] {
+    color: #000000 !important;
+  }
 
-    /* Enhance the glow effect on hover */
-    [data-testid="stSidebar"] .stTextInput input:hover,
-    [data-testid="stSidebar"] .stSelectbox select:hover,
-    [data-testid="stSidebar"] .stDateInput input:hover {
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
-        animation: glowing 5s ease infinite;
-    }
+  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"]::placeholder {
+    color: rgba(0, 0, 0, 0.7) !important;
+  }
 
-    [data-testid="stSidebar"] .stButton > button {
-        animation: pulse 2s infinite;
-    }
+  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"]:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+
+  /* Style for dropdown options */
+  [data-testid="stSidebar"] div[data-baseweb="select"] ul {
+    background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
+    background-size: 400% 400%;
+    border: none !important;
+    border-radius: 5px;
+    padding: 10px 15px;
+    transition: all 120s ease;
+    animation: glowing 90s ease infinite;
+  }
+
+  [data-testid="stSidebar"] div[data-baseweb="select"] ul li {
+    color: #000000;
+  }
 
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
@@ -358,9 +367,9 @@ st.markdown("""
     }
 
     /* Hide Streamlit elements */
-    #MainMenu {visibility: hidden;}
+    #MainMenu {visibility: ;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    header {visibility: ;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -472,13 +481,15 @@ def save_app_data():
         "categories": st.session_state.categories,
         "rewards": st.session_state.rewards,
         "user_points": st.session_state.user_points,
-        "completion_rate": st.session_state.completion_rate
+        "completion_rate": st.session_state.completion_rate,
+        "filter_category": st.session_state.filter_category,
+        "filter_priority": st.session_state.filter_priority,
+        "filter_due": st.session_state.filter_due
     }
     file_path = os.path.join(get_data_dir(), "app_data.json")
     with open(file_path, "w") as file:
         json.dump(data, file, cls=CustomJSONEncoder)
     print(f"Data saved to: {file_path}")
-
 
 # Function to load all app data
 def load_app_data():
@@ -488,25 +499,13 @@ def load_app_data():
             content = file.read().strip()
             if content:  # Check if the file is not empty
                 data = json.loads(content)
-                st.session_state.tasks = data.get("tasks", [])
-                st.session_state.completed_tasks = data.get("completed_tasks", [])
-                st.session_state.streaks = data.get("streaks", 0)
-                st.session_state.last_completed = parser.parse(data.get("last_completed")).date() if data.get("last_completed") else None
-                st.session_state.categories = data.get("categories", ['Work', 'Personal', 'Shopping', 'Health', 'Finance'])
-                st.session_state.rewards = data.get("rewards", [
-                    {'name': 'Coffee Break', 'points': 10},
-                    {'name': '15min Social Media', 'points': 20},
-                    {'name': 'Netflix Episode', 'points': 50},
-                    {'name': 'Treat Yourself', 'points': 100}
-                ])
-                st.session_state.user_points = data.get("user_points", 0)
-                st.session_state.completion_rate = data.get("completion_rate", 0)
+                # ... (existing code to load other data)
 
-                # Parse the due_date string back into a date object
-                for task in st.session_state.tasks:
-                    task["due_date"] = parser.parse(task["due_date"]).date() if isinstance(task["due_date"], str) else task["due_date"]
-                for task in st.session_state.completed_tasks:
-                    task["due_date"] = parser.parse(task["due_date"]).date() if isinstance(task["due_date"], str) else task["due_date"]
+                # Initialize filter states
+                st.session_state.filter_category = data.get("filter_category", [])
+                st.session_state.filter_priority = data.get("filter_priority", [])
+                st.session_state.filter_due = parser.parse(data.get("filter_due")).date() if data.get(
+                    "filter_due") else None
             else:
                 print(f"The file at {file_path} is empty. Initializing with default values.")
                 initialize_default_values()
@@ -531,6 +530,9 @@ def initialize_default_values():
     ]
     st.session_state.user_points = 0
     st.session_state.completion_rate = 0
+    st.session_state.filter_category = []
+    st.session_state.filter_priority = []
+    st.session_state.filter_due = None
 
 # Load app data at the start
 load_app_data()
@@ -603,15 +605,6 @@ def get_motivation_quote():
     ]
     return random.choice(quotes)
 
-
-def update_completion_rate():
-    total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
-    st.session_state.completion_rate = (
-                len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
-    save_app_data()
-    update_gauge()
-
-
 def update_gauge():
     gauge_placeholder.markdown(f"""
     <div class="gauge-container">
@@ -621,6 +614,13 @@ def update_gauge():
         <div class="gauge-percentage">{st.session_state.completion_rate:.1f}%</div>
     </div>
     """, unsafe_allow_html=True)
+
+def update_completion_rate():
+    total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
+    st.session_state.completion_rate = (
+                len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
+    save_app_data()
+    update_gauge()
 
 
 # Main app layout
@@ -661,39 +661,22 @@ def main():
     with col1:
         st.header("📋 Dashboard")
 
-        update_gauge()
-
         # Task filters
         st.markdown('<div class="filter-container">', unsafe_allow_html=True)
-
-        # Initialize filter states if they don't exist
-        if 'filter_category' not in st.session_state:
-            st.session_state.filter_category = []
-        if 'filter_priority' not in st.session_state:
-            st.session_state.filter_priority = []
-        if 'filter_due' not in st.session_state:
-            st.session_state.filter_due = None
-
-        # Category filter
         st.session_state.filter_category = st.multiselect(
             "Filter by Category",
             options=st.session_state.categories,
-            default=st.session_state.filter_category
+            default=st.session_state.get('filter_category', [])
         )
-
-        # Priority filter
         st.session_state.filter_priority = st.multiselect(
             "Filter by Priority",
             options=["Low", "Medium", "High"],
-            default=st.session_state.filter_priority
+            default=st.session_state.get('filter_priority', [])
         )
-
-        # Due date filter
         st.session_state.filter_due = st.date_input(
             "Filter by Due Date",
-            value=st.session_state.filter_due
+            value=st.session_state.get('filter_due')
         )
-
         st.markdown('</div>', unsafe_allow_html=True)
 
         # Display tasks
@@ -722,12 +705,9 @@ def main():
                         st.write(f"📁 {category}")
 
     with col2:
-        st.markdown('<h2 class="insights-title">📊 Productivity Insights</h2>', unsafe_allow_html=True)
-
-        st.markdown('<h3>Task Completion Rate</h3>', unsafe_allow_html=True)
-
-        # Task completion rate
         update_gauge()
+
+        st.markdown('<h2 class="insights-title">📊 Productivity</h2>', unsafe_allow_html=True)
 
         # Task distribution by category
         if st.session_state.tasks:
