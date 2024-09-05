@@ -193,8 +193,8 @@ st.markdown("""
     background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
     background-size: 400% 400%;
     border: none !important;
-    border-radius: 5px;
-    padding: 5px 15px;
+    border-radius: 40px;
+    padding: 5px 25px;
     transition: all 120s ease;
     animation: glowing 90s ease infinite;
   }
@@ -211,7 +211,7 @@ st.markdown("""
   }
 
   /* Style for priority and category selectboxes */
-  [data-testid="stSidebar"] div[data-baseweb="select"] {
+  [data-testid="stSidebar"] div[data-baseweb="input"] {
     background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
     background-size: 400% 400%;
     border: none !important;
@@ -221,21 +221,21 @@ st.markdown("""
     animation: glowing 90s ease infinite;
   }
 
-  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"] {
+  [data-testid="stSidebar"] div[data-baseweb="input"] div[role="button"] {
     color: #000000 !important;
   }
 
-  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"]::placeholder {
+  [data-testid="stSidebar"] div[data-baseweb="input"] div[role="button"]::placeholder {
     color: rgba(0, 0, 0, 0.7) !important;
   }
 
-  [data-testid="stSidebar"] div[data-baseweb="select"] div[role="button"]:focus {
+  [data-testid="stSidebar"] div[data-baseweb="input"] div[role="button"]:focus {
     outline: none;
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
   }
 
   /* Style for dropdown options */
-  [data-testid="stSidebar"] div[data-baseweb="select"] ul {
+  [data-testid="stSidebar"] div[data-baseweb="input"] ul {
     background: linear-gradient(90deg, #ff00ff, #088F8F, #00ffff, #ff00ff);
     background-size: 400% 400%;
     border: none !important;
@@ -245,7 +245,7 @@ st.markdown("""
     animation: glowing 90s ease infinite;
   }
 
-  [data-testid="stSidebar"] div[data-baseweb="select"] ul li {
+  [data-testid="stSidebar"] div[data-baseweb="input"] ul li {
     color: #000000;
   }
 
