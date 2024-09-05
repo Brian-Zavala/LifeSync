@@ -370,6 +370,41 @@ st.markdown("""
     .stApp {
         margin-top: -80px;
     }
+        /* Base styles for input widgets */
+    .stTextInput > div > div > input,
+    .stSelectbox > div > div > div,
+    .stDateInput > div > div > input {
+        background: linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3));
+        color: white !important;
+        border-radius: 5px !important;
+        transition: all 0.3s ease !important;
+        border: none !important;
+    }
+
+    /* Hover and focus styles for input widgets */
+    .stTextInput > div > div > input:hover,
+    .stTextInput > div > div > input:focus,
+    .stSelectbox > div > div > div:hover,
+    .stDateInput > div > div > input:hover,
+    .stDateInput > div > div > input:focus {
+        background: linear-gradient(45deg, rgba(255, 0, 222, 0.5), rgba(0, 255, 255, 0.5));
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Custom class for glowing effect */
+    .widget-glow {
+        animation: widget-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes widget-glow {
+        from {
+            box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00ffff, 0 0 20px #00ffff;
+        }
+        to {
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -639,6 +674,66 @@ def main():
 
 st.markdown("""
 <script>
+// Function to toggle the sidebar
+function toggleSidebar() {
+    const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+    const sidebarContent = sidebar.querySelector('[data-testid="stSidebarContent"]');
+    if (sidebarContent.style.width === '0px' || sidebarContent.style.width === '') {
+        sidebarContent.style.width = '350px';
+        sidebar.style.width = '350px';
+        sidebar.style.opacity = 1;
+        sidebar.style.pointerEvents = 'auto';
+    } else {
+        sidebarContent.style.width = '0px';
+        sidebar.style.width = '0px';
+        sidebar.style.opacity = 0;
+        sidebar.style.pointerEvents = 'none';
+    }
+}
+
+// Function to apply glow effect to dynamic elements
+function applyGlowEffect() {
+    const glowElements = document.querySelectorAll('.points-glow');
+    glowElements.forEach(elem => {
+        elem.style.textShadow = `
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff
+        `;
+    });
+}
+
+// Function to enhance hover effects
+function enhanceHoverEffects() {
+    const hoverElements = document.querySelectorAll('.stSelectbox > div, .stTextInput > div, .stDateInput > div');
+    hoverElements.forEach(elem => {
+        elem.addEventListener('mouseenter', () => {
+            elem.style.transform = 'translateY(-2px)';
+            elem.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
+        });
+        elem.addEventListener('mouseleave', () => {
+            elem.style.transform = 'translateY(0)';
+            elem.style.boxShadow = 'none';
+        });
+    });
+}
+
+// Function to animate task cards
+function animateTaskCards() {
+    const taskCards = document.querySelectorAll('.task-card');
+    taskCards.forEach((card, index) => {
+        card.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s`;
+    });
+}
+
+// Function to initialize custom scrollbar
+function initCustomScrollbar() {
+    document.body.style.scrollbarWidth = 'thin';
+    document.body.style.scrollbarColor = '#4CAF50 #1E1E1E';
+}
+
+// Function to enhance sidebar effects
 function enhanceSidebarEffects() {
     const sidebarElements = document.querySelectorAll('[data-testid="stSidebar"] .stTextInput, [data-testid="stSidebar"] .stSelectbox, [data-testid="stSidebar"] .stDateInput, [data-testid="stSidebar"] .stButton');
     sidebarElements.forEach(elem => {
@@ -663,6 +758,7 @@ function enhanceSidebarEffects() {
     });
 }
 
+// Function to apply sidebar glow
 function applySidebarGlow() {
     const glowElements = document.querySelectorAll('.sidebar-glow');
     glowElements.forEach(elem => {
@@ -670,14 +766,67 @@ function applySidebarGlow() {
     });
 }
 
-// Add these function calls to your existing runCustomScripts function
-function runCustomScripts() {
-    // ... (previous function calls)
-    enhanceSidebarEffects();
-    applySidebarGlow();
+// Function to enhance widgets with dynamic effects
+function enhanceWidgets() {
+    const widgets = document.querySelectorAll('.stTextInput > div > div > input, .stSelectbox > div > div > div, .stDateInput > div > div > input');
+    
+    widgets.forEach(widget => {
+        widget.addEventListener('mouseenter', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
+            widget.classList.add('widget-glow');
+        });
+
+        widget.addEventListener('mouseleave', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
+            widget.classList.remove('widget-glow');
+        });
+
+        widget.addEventListener('focus', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
+            widget.classList.add('widget-glow');
+        });
+
+        widget.addEventListener('blur', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
+            widget.classList.remove('widget-glow');
+        });
+
+        // For touch devices
+        widget.addEventListener('touchstart', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
+            widget.classList.add('widget-glow');
+        });
+
+        widget.addEventListener('touchend', () => {
+            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
+            widget.classList.remove('widget-glow');
+        });
+    });
 }
 
-// The rest of your script (DOMContentLoaded and MutationObserver) remains the same
+// Main function to run all custom scripts
+function runCustomScripts() {
+    applyGlowEffect();
+    enhanceHoverEffects();
+    animateTaskCards();
+    initCustomScrollbar();
+    enhanceSidebarEffects();
+    applySidebarGlow();
+    enhanceWidgets();
+}
+
+// Add click event listener to the toggle button
+const toggleButton = document.querySelector('.sidebar-toggle');
+if (toggleButton) {
+    toggleButton.addEventListener('click', toggleSidebar);
+}
+
+// Run custom scripts when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', runCustomScripts);
+
+// Re-run custom scripts when Streamlit re-renders the page
+const observer = new MutationObserver(runCustomScripts);
+observer.observe(document.body, { childList: true, subtree: true });
 </script>
 """, unsafe_allow_html=True)
 # ===== Main Execution =====
