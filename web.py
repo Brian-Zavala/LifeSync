@@ -11,7 +11,6 @@ from dateutil import parser
 # ===== Page Configuration =====
 st.set_page_config(page_title="LifeSync", page_icon="🌟", layout="wide", initial_sidebar_state="expanded")
 
-
 # ===== Custom CSS =====
 st.markdown("""
 <style>
@@ -472,6 +471,7 @@ def get_data_dir():
     os.makedirs(data_dir, exist_ok=True)
     return data_dir
 
+
 def save_app_data():
     data = {
         "tasks": st.session_state.tasks,
@@ -490,6 +490,7 @@ def save_app_data():
     with open(file_path, "w") as file:
         json.dump(data, file, cls=CustomJSONEncoder)
     print(f"Data saved to: {file_path}")
+
 
 # Function to load all app data
 def load_app_data():
@@ -516,6 +517,7 @@ def load_app_data():
         print(f"Invalid JSON in {file_path}. Starting with default values.")
         initialize_default_values()
 
+
 def initialize_default_values():
     st.session_state.tasks = []
     st.session_state.completed_tasks = []
@@ -533,6 +535,7 @@ def initialize_default_values():
     st.session_state.filter_category = []
     st.session_state.filter_priority = []
     st.session_state.filter_due = None
+
 
 # Load app data at the start
 load_app_data()
@@ -605,6 +608,7 @@ def get_motivation_quote():
     ]
     return random.choice(quotes)
 
+
 def update_gauge():
     gauge_placeholder.markdown(f"""
     <div class="gauge-container">
@@ -615,10 +619,11 @@ def update_gauge():
     </div>
     """, unsafe_allow_html=True)
 
+
 def update_completion_rate():
     total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
     st.session_state.completion_rate = (
-                len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
+            len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
     save_app_data()
     update_gauge()
 
