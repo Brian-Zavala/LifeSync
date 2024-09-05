@@ -138,18 +138,15 @@ st.markdown("""
         background-color: #7e57c2;
         color: #ffffff;
     }
-    /* Animated sidebar background */
+       /* Animated sidebar background */
     [data-testid="stSidebar"] {
         background: linear-gradient(
             45deg,
-            rgba(72, 52, 212, 1),
-            rgba(48, 51, 107, 1),
-            rgba(95, 39, 205, 1),
-            rgba(87, 75, 144, 1)
+            rgba(76, 175, 80, 0.9),  /* Green */
+            rgba(33, 150, 243, 0.9)  /* Blue */
         ) !important;
-        background-size: 400% 400% !important;
+        background-size: 200% 200% !important;
         animation: gradientShift 15s ease infinite !important;
-    }
 
     @keyframes gradientShift {
         0% {
@@ -326,32 +323,21 @@ st.markdown("""
     .sidebar .stForm > div {
         margin-bottom: 15px !important;
     }
-[data-testid="stSidebar"] .element-container,
-[data-testid="stSidebar"] .stTextInput,
-[data-testid="stSidebar"] .stSelectbox,
-[data-testid="stSidebar"] .stDateInput {
-    margin-bottom: 20px !important;
-}
-
-[data-testid="stSidebar"] .stForm > div {
-    margin-bottom: 20px !important;
-}
-
-[data-testid="stSidebar"] .stForm {
-    padding: 20px !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px !important;
-}
-
-        /* Animated sidebar background */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(
-            45deg,
-            rgba(76, 175, 80, 0.7),  /* Green */
-            rgba(33, 150, 243, 0.7)  /* Blue */
-        ) !important;
-        background-size: 200% 200% !important;
-        animation: gradientShift 15s ease infinite !important;
+    [data-testid="stSidebar"] .element-container,
+    [data-testid="stSidebar"] .stTextInput,
+    [data-testid="stSidebar"] .stSelectbox,
+    [data-testid="stSidebar"] .stDateInput {
+        margin-bottom: 20px !important;
+    }
+    
+    [data-testid="stSidebar"] .stForm > div {
+        margin-bottom: 20px !important;
+    }
+    
+    [data-testid="stSidebar"] .stForm {
+        padding: 20px !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
     }
 
     @keyframes gradientShift {
