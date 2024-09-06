@@ -419,7 +419,7 @@ st.markdown("""
         /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: ;}
+    header {visibility: hidden;}
 
     /* Adjust the app container to fill the screen */
     .stApp {
