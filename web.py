@@ -716,7 +716,40 @@ observer.observe(document.body, { childList: true, subtree: true });
 </script>
 """, unsafe_allow_html=True)
 
+# ===== Cached Functions =====
+@st.cache_data(ttl=3600)
+def get_motivation_quote():
+    quotes = [
+        "The only way to do great work is to love what you do. - Steve Jobs",
+        "Believe you can and you're halfway there. - Theodore Roosevelt",
+        "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
+        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+        "Don't watch the clock; do what it does. Keep going. - Sam Levenson"
+    ]
+    return random.choice(quotes)
 
+@st.cache_data(ttl=3600)
+def get_productivity_tips():
+    return [
+        "Break large tasks into smaller, manageable steps.",
+        "Use the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.",
+        "Prioritize your tasks using the Eisenhower Matrix.",
+        "Minimize distractions by turning off notifications during focus time.",
+        "Start your day by tackling the most important or challenging task.",
+    ]
+
+@st.cache_resource
+def get_reward_options():
+    return [
+        {'name': 'Coffee Break', 'points': 10},
+        {'name': '15min Social Media', 'points': 20},
+        {'name': 'Netflix Episode', 'points': 50},
+        {'name': 'Treat Yourself', 'points': 100}
+    ]
+
+@st.cache_data(ttl=60)
+def load_cached_user_data(username):
+    return load_user_data(username)
 # Helper Functions
 def login_user():
     username = st.session_state.username
@@ -747,7 +780,7 @@ def register_user():
     else:
         st.error(message)
 
-
+@st.cache_data(ttl=60)
 def update_completion_bar():
     total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
     completion_rate = (len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
