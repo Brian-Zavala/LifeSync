@@ -101,3 +101,14 @@ def update_user_stats(username, stats):
         {"username": username},
         {"$set": stats}
     )
+
+
+# Ensure all necessary functions are exported
+__all__ = [
+    'create_user',
+    'load_user_data',
+    'save_user_data',
+    'add_task',
+    'complete_task',
+    'update_user_stats'
+]
