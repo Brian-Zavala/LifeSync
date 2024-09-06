@@ -872,7 +872,14 @@ def main():
     if 'logout_key' not in st.session_state:
         st.session_state.logout_key = None
 
+
+
     if not st.session_state.user:
+        st.markdown("""
+             <div class="dynamic-title">
+                 Welcome to LifeSync
+             </div>
+         """, unsafe_allow_html=True)
         # Login/Register UI
         col1, col2 = st.columns(2)
         with col1:
