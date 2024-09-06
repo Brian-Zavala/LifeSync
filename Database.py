@@ -1,13 +1,10 @@
 import os
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
-from datetime import datetime, date
-import json
+from datetime import datetime
 
 # Get MongoDB Atlas connection string from environment variable
-MONGO_CONNECT = "mongodb+srv://brianzavala2025:NSTBqOhLxzVVfPDW@lifesync.ykxbj.mongodb.net/?retryWrites=true&w=majority&appName=LifeSync"
-
+MONGO_CONNECT = os.environ.get('MONGO_LIFESYNC')
 
 print("Attempting to connect to MongoDB...")
 
