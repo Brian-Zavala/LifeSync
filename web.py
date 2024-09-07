@@ -640,72 +640,8 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
-
-    /* Adjust the app container to fill the screen */
-    .stApp {
-        margin-top: -75px;
-    }
-        .water-flow-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 40px;
-        overflow: hidden;
-        z-index: 1000;
-    }
-    .water-flow {
-        width: 200%;
-        height: 100%;
-        animation: flowAnimation 20s linear infinite;
-    }
-    .water-path {
-        fill: none;
-        stroke: url(#waterGradient);
-        stroke-width: 40px;
-        stroke-linecap: round;
-    }
-    .bubble {
-        fill: rgba(255, 255, 255, 0.5);
-        animation: bubbleFloat 4s ease-in-out infinite;
-    }
-    @keyframes flowAnimation {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-    }
-    @keyframes bubbleFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
 </style>
 """, unsafe_allow_html=True)
-st.markdown("""<div class="water-flow-container">
-    <svg class="water-flow" viewBox="0 0 1200 40" preserveAspectRatio="none">
-        <defs>
-            <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:rgba(0,199,255,0.7)" />
-                <stop offset="50%" style="stop-color:rgba(146,254,157,0.7)" />
-                <stop offset="100%" style="stop-color:rgba(0,199,255,0.7)" />
-            </linearGradient>
-        </defs>
-        <path class="water-path" d="M0,20 Q300,5 600,20 T1200,20" />
-        <circle class="bubble" cx="100" cy="15" r="3">
-            <animate attributeName="cx" from="100" to="1100" dur="20s" repeatCount="indefinite" />
-        </circle>
-        <circle class="bubble" cx="300" cy="25" r="2">
-            <animate attributeName="cx" from="300" to="1300" dur="15s" repeatCount="indefinite" />
-        </circle>
-        <circle class="bubble" cx="500" cy="10" r="4">
-            <animate attributeName="cx" from="500" to="1500" dur="25s" repeatCount="indefinite" />
-        </circle>
-        <circle class="bubble" cx="700" cy="20" r="3">
-            <animate attributeName="cx" from="700" to="1700" dur="18s" repeatCount="indefinite" />
-        </circle>
-        <circle class="bubble" cx="900" cy="15" r="2">
-            <animate attributeName="cx" from="900" to="1900" dur="22s" repeatCount="indefinite" />
-        </circle>
-    </svg>
-</div>""", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="completion-bar-container">
