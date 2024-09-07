@@ -634,6 +634,84 @@ st.markdown("""
     0% { height: 0; }
     100% { height: 12px; }
 }
+    /* Custom button styles */
+    .stButton > button {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .stButton > button:hover {
+        background: linear-gradient(45deg, #764ba2, #667eea);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .stButton > button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Redeem button style */
+    .redeem-button {
+        background: linear-gradient(45deg, #00C9FF, #92FE9D) !important;
+        color: #1E1E1E !important;
+        font-size: 0.8rem !important;
+        padding: 0.3rem 0.6rem !important;
+        border-radius: 20px !important;
+    }
+
+    .redeem-button:hover {
+        background: linear-gradient(45deg, #92FE9D, #00C9FF) !important;
+    }
+
+    /* Custom button styles to match input widgets */
+    .stButton > button, 
+    button[kind="secondaryFormSubmit"],
+    .redeem-button {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 4px !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: normal !important;
+        transition: all 0.3s ease !important;
+        backdrop-filter: blur(5px) !important;
+    }
+
+    .stButton > button:hover, 
+    button[kind="secondaryFormSubmit"]:hover,
+    .redeem-button:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .stButton > button:active, 
+    button[kind="secondaryFormSubmit"]:active,
+    .redeem-button:active {
+        transform: translateY(0) !important;
+        box-shadow: none !important;
+    }
+
+    /* Adjust redeem button size */
+    .redeem-button {
+        font-size: 0.8rem !important;
+        padding: 0.3rem 0.6rem !important;
+    }
+
+    /* Ensure text color consistency */
+    .stButton > button > div > p,
+    button[kind="secondaryFormSubmit"] > div > p,
+    .redeem-button > div > p {
+        color: white !important;
+    }
             /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -678,6 +756,27 @@ st.markdown("""
             bubbles.appendChild(bubble);
         }
     }
+</script>
+""", unsafe_allow_html=True)
+
+# Apply custom styling to buttons
+st.markdown("""
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Style the Add Task button
+    var addTaskButton = document.querySelector('button[kind="primaryFormSubmit"]');
+    if (addTaskButton) {
+        addTaskButton.classList.add('add-task-button');
+    }
+
+    // Style the Redeem buttons
+    var redeemButtons = document.querySelectorAll('button[data-baseweb="button"]:not([kind="secondaryFormSubmit"])');
+    redeemButtons.forEach(button => {
+        if (button.textContent.includes('🎁 Redeem')) {
+            button.classList.add('redeem-button');
+        }
+    });
+});
 </script>
 """, unsafe_allow_html=True)
 
