@@ -1245,7 +1245,6 @@ def main():
                         else:
                             st.error("Not enough points!")
 
-
         # Sidebar
         with st.sidebar:
             st.button("Logout", on_click=logout_user, key=st.session_state.logout_key)
