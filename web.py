@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from datetime import datetime, timedelta
 import random
 import time
@@ -67,6 +68,30 @@ st.markdown("""
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
 }
+        .login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+    .login-title {
+        font-size: 2.5rem;
+        margin: 1rem 0;
+        color: #ffffff;
+        text-align: center;
+    }
+    .login-form {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        width: 100%;
+        max-width: 400px;
+    }
+    .stButton > button {
+        width: 100%;
+    }
     /* Productivity Gauge Styles */
     .productivity-gauge {
         background-color: rgba(255, 255, 255, 0.1);
@@ -404,126 +429,283 @@ st.markdown("""
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
-    /* Mobile-friendly styles */
-    @media (max-width: 768px) {
-        .dynamic-title {
-            font-size: 2rem;
-        }
-        .st-bw {
-            padding: 15px;
-        }
-        .st-emotion-cache-16txtl3 {
-            padding: 1rem;
-        }
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dynamic-title {
+        font-size: 2rem;
     }
-        /* Hide Streamlit elements */
+    .st-bw {
+        padding: 15px;
+    }
+    .st-emotion-cache-16txtl3 {
+        padding: 1rem;
+    }
+}
+
+/* Base styles for input widgets */
+.stTextInput > div > div > input,
+.stSelectbox > div > div > div,
+.stDateInput > div > div > input {
+    background: linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3));
+    color: white !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+    padding: 10px !important;
+    position: relative;
+    left: 4px;
+    z-index: 1;
+}
+
+/* Glowing effect container */
+.stTextInput > div > div,
+.stSelectbox > div > div,
+.stDateInput > div > div {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+/* Infinite rotating glow effect */
+.stTextInput > div > div::before,
+.stSelectbox > div > div::before,
+.stDateInput > div > div::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        rgba(255, 0, 222, 0.8) 25%,
+        rgba(0, 255, 255, 0.8) 50%,
+        transparent 75%,
+        transparent 100%
+    );
+    animation: rotate-glow 4s linear infinite;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Hover and focus styles for input widgets */
+.stTextInput > div > div:hover::before,
+.stTextInput > div > div:focus-within::before,
+.stSelectbox > div > div:hover::before,
+.stDateInput > div > div:hover::before,
+.stDateInput > div > div:focus-within::before {
+    opacity: 1;
+}
+
+.stTextInput > div > div > input:hover,
+.stTextInput > div > div > input:focus,
+.stSelectbox > div > div > div:hover,
+.stDateInput > div > div > input:hover,
+.stDateInput > div > div > input:focus {
+    background: linear-gradient(45deg, rgba(255, 0, 222, 0.5), rgba(0, 255, 255, 0.5));
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Rotation animation for the glow effect */
+@keyframes rotate-glow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Custom class for additional widget glow (optional) */
+.widget-glow {
+    animation: widget-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes widget-pulse {
+    from {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 0, 222, 0.5), 0 0 15px rgba(0, 255, 255, 0.5);
+    }
+    to {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 0, 222, 0.7), 0 0 30px rgba(0, 255, 255, 0.7);
+    }
+}
+ 
+.stCheckbox {
+    position: relative;
+    padding-left: 40px;
+    padding-down: 10px;
+    cursor: pointer;
+    left: -20px;
+    font-size: 140px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+}
+
+.stCheckbox > label {
+    display: inline-block;
+    position: relative;
+    padding-left: 40px;
+    cursor: pointer;
+    line-height: 29px; /* Adjust this value to move the text up or down relative to the checkbox */
+}
+
+.stCheckbox > label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 54%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: #2c3e50;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+}
+
+.stCheckbox > label::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 40%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 12px;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        transparent 25%,
+        #3498db 25%,
+        #3498db 50%,
+        transparent 50%,
+        transparent 75%,
+        #3498db 75%,
+        #3498db 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stCheckbox:hover > label::after {
+    opacity: 1;
+    animation: rotate 4s linear infinite;
+}
+
+.stCheckbox > label > span {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    height: 30px;
+    width: 30px;
+    background-color: transparent;
+}
+
+.stCheckbox input:checked + label::before {
+    background-color: #3498db;
+    animation: pulse 0.5s ease-out;
+}
+
+.stCheckbox input:checked + label > span::after {
+    content: "";
+    position: absolute;
+    display: block;
+    left: 11px;
+    top: 7px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    animation: check 0.3s ease-out;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
+    50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+}
+
+@keyframes check {
+    0% { height: 0; }
+    100% { height: 12px; }
+}
+            /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
     /* Adjust the app container to fill the screen */
     .stApp {
-        margin-top: -80px;
+        margin-top: -75px;
     }
-        /* Base styles for input widgets */
-    .stTextInput > div > div > input,
-    .stSelectbox > div > div > div,
-    .stDateInput > div > div > input {
-        background: linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3));
-        color: white !important;
-        border-radius: 5px !important;
-        transition: all 0.3s ease !important;
-        border: none !important;
-    }
-
-    /* Hover and focus styles for input widgets */
-    .stTextInput > div > div > input:hover,
-    .stTextInput > div > div > input:focus,
-    .stSelectbox > div > div > div:hover,
-    .stDateInput > div > div > input:hover,
-    .stDateInput > div > div > input:focus {
-        background: linear-gradient(45deg, rgba(255, 0, 222, 0.5), rgba(0, 255, 255, 0.5));
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    /* Custom class for glowing effect */
-    .widget-glow {
-        animation: widget-glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes widget-glow {
-        from {
-            box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00ffff, 0 0 20px #00ffff;
-        }
-        to {
-            box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #00ffff, 0 0 40px #00ffff;
-        }
- 
-    /* Custom checkbox styles */
-    .stCheckbox {
-        position: relative;
-        padding-left: 35px;
-        margin-bottom: 12px;
-        cursor: pointer;
-        font-size: 22px;
-        user-select: none;
-    }
-
-    .stCheckbox input {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
-        height: 0;
-        width: 0;
-    }
-
-    .stCheckbox > div {
-        position: absolute;
+        .water-flow-container {
+        position: fixed;
         top: 0;
         left: 0;
-        height: 25px;
-        width: 25px;
-        background-color: #eee;
-        border-radius: 50%;
-        transition: all 0.3s ease;
+        width: 100%;
+        height: 40px;
+        overflow: hidden;
+        z-index: 1000;
     }
-
-    .stCheckbox:hover input ~ div {
-        background-color: #ccc;
+    .water-flow {
+        width: 200%;
+        height: 100%;
+        animation: flowAnimation 20s linear infinite;
     }
-
-    .stCheckbox input:checked ~ div {
-        background-color: #2196F3;
-        animation: pulse 0.5s ease-out;
+    .water-path {
+        fill: none;
+        stroke: url(#waterGradient);
+        stroke-width: 40px;
+        stroke-linecap: round;
     }
-
-    .stCheckbox input:checked ~ div::after {
-        content: "";
-        position: absolute;
-        display: block;
-        left: 9px;
-        top: 5px;
-        width: 5px;
-        height: 10px;
-        border: solid white;
-        border-width: 0 3px 3px 0;
-        transform: rotate(45deg);
-        animation: check 0.3s ease-out;
+    .bubble {
+        fill: rgba(255, 255, 255, 0.5);
+        animation: bubbleFloat 4s ease-in-out infinite;
     }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
+    @keyframes flowAnimation {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
     }
-
-    @keyframes check {
-        0% { height: 0; }
-        100% { height: 10px; }
+    @keyframes bubbleFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
     }
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""<div class="water-flow-container">
+    <svg class="water-flow" viewBox="0 0 1200 40" preserveAspectRatio="none">
+        <defs>
+            <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:rgba(0,199,255,0.7)" />
+                <stop offset="50%" style="stop-color:rgba(146,254,157,0.7)" />
+                <stop offset="100%" style="stop-color:rgba(0,199,255,0.7)" />
+            </linearGradient>
+        </defs>
+        <path class="water-path" d="M0,20 Q300,5 600,20 T1200,20" />
+        <circle class="bubble" cx="100" cy="15" r="3">
+            <animate attributeName="cx" from="100" to="1100" dur="20s" repeatCount="indefinite" />
+        </circle>
+        <circle class="bubble" cx="300" cy="25" r="2">
+            <animate attributeName="cx" from="300" to="1300" dur="15s" repeatCount="indefinite" />
+        </circle>
+        <circle class="bubble" cx="500" cy="10" r="4">
+            <animate attributeName="cx" from="500" to="1500" dur="25s" repeatCount="indefinite" />
+        </circle>
+        <circle class="bubble" cx="700" cy="20" r="3">
+            <animate attributeName="cx" from="700" to="1700" dur="18s" repeatCount="indefinite" />
+        </circle>
+        <circle class="bubble" cx="900" cy="15" r="2">
+            <animate attributeName="cx" from="900" to="1900" dur="22s" repeatCount="indefinite" />
+        </circle>
+    </svg>
+</div>""", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="completion-bar-container">
@@ -716,6 +898,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 </script>
 """, unsafe_allow_html=True)
 
+
 # ===== Cached Functions =====
 @st.cache_data(ttl=3600)
 def get_motivation_quote():
@@ -728,6 +911,7 @@ def get_motivation_quote():
     ]
     return random.choice(quotes)
 
+
 @st.cache_data(ttl=3600)
 def get_productivity_tips():
     return [
@@ -738,6 +922,7 @@ def get_productivity_tips():
         "Start your day by tackling the most important or challenging task.",
     ]
 
+
 @st.cache_resource
 def get_reward_options():
     return [
@@ -747,9 +932,12 @@ def get_reward_options():
         {'name': 'Treat Yourself', 'points': 100}
     ]
 
+
 @st.cache_data(ttl=60)
 def load_cached_user_data(username):
     return load_user_data(username)
+
+
 # Helper Functions
 def login_user():
     username = st.session_state.username
@@ -758,7 +946,6 @@ def login_user():
         st.session_state.user = username
         for key, value in user_data.items():
             st.session_state[key] = value
-        st.success("Logged in successfully!")
     else:
         st.error("User not found. Please create an account.")
 
@@ -779,6 +966,7 @@ def register_user():
         login_user()
     else:
         st.error(message)
+
 
 @st.cache_data(ttl=60)
 def update_completion_bar():
@@ -857,17 +1045,6 @@ def update_completion_rate():
     update_user_stats(st.session_state.user, {"completion_rate": st.session_state.completion_rate})
 
 
-def get_motivation_quote():
-    quotes = [
-        "The only way to do great work is to love what you do. - Steve Jobs",
-        "Believe you can and you're halfway there. - Theodore Roosevelt",
-        "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
-        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
-        "Don't watch the clock; do what it does. Keep going. - Sam Levenson"
-    ]
-    return random.choice(quotes)
-
-
 def handle_task_completion():
     task_id = st.session_state.get('task_to_complete')
     if task_id:
@@ -905,14 +1082,13 @@ def main():
     if 'logout_key' not in st.session_state:
         st.session_state.logout_key = None
 
-
-
     if not st.session_state.user:
         st.markdown("""
              <div class="dynamic-title">
                  Welcome to LifeSync
              </div>
          """, unsafe_allow_html=True)
+
         # Login/Register UI
         col1, col2 = st.columns(2)
         with col1:
@@ -927,10 +1103,6 @@ def main():
         # Generate a unique key for the logout button if it doesn't exist
         if st.session_state.logout_key is None:
             st.session_state.logout_key = f"logout_{st.session_state.user}_{int(time.time())}"
-
-        col_title, col_gauge = st.columns([3, 1])
-        with col_title:
-            st.subheader("⚡ Quick Add Task")
 
         completion_rate = st.session_state.completion_rate
         st.markdown(f"""
@@ -956,8 +1128,6 @@ def main():
         if submitted:
             add_task(task, due_date, priority, category)
             update_completion_bar()
-
-        st.header("📋 Dashboard")
 
         # Task filters
         with st.expander("Task Filters", expanded=False):
@@ -1006,7 +1176,11 @@ def main():
         render_completion_bar()
 
         # Rewards section
-        st.subheader("🎁 Rewards Center")
+        st.markdown(f"""
+            <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
+                <h3 class='points-glow'>Reward Center</h3>
+            </div>
+            """, unsafe_allow_html=True)
         st.markdown(f"""
             <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
                 <h3 class='points-glow'>You have {st.session_state.user_points} points to spend!</h3>
@@ -1046,10 +1220,9 @@ def main():
 
         # Sidebar
         with st.sidebar:
-            st.markdown('<h2 class="sidebar-glow">LifeSync Menu</h2>', unsafe_allow_html=True)
             st.button("Logout", on_click=logout_user, key=st.session_state.logout_key)
 
-            st.markdown('<h3 class="sidebar-glow">User Stats</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 class="sidebar-glow">LifeSync Stats</h3>', unsafe_allow_html=True)
             st.metric("🏆 Streak", f"{st.session_state.streaks} days")
             st.metric("💎 Points", st.session_state.user_points)
 
