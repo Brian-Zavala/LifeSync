@@ -1245,17 +1245,6 @@ def main():
                         else:
                             st.error("Not enough points!")
 
-        # Productivity Tips
-        st.subheader("💡 Productivity Tips")
-        tips = [
-            "Break large tasks into smaller, manageable steps.",
-            "Use the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.",
-            "Prioritize your tasks using the Eisenhower Matrix.",
-            "Minimize distractions by turning off notifications during focus time.",
-            "Start your day by tackling the most important or challenging task.",
-        ]
-        tip_index = random.randint(0, len(tips) - 1)
-        st.info(tips[tip_index])
 
         # Sidebar
         with st.sidebar:
@@ -1267,6 +1256,18 @@ def main():
 
             st.markdown('<h3 class="sidebar-glow">Daily Inspiration</h3>', unsafe_allow_html=True)
             st.info(get_motivation_quote())
+
+            # Productivity Tips
+            st.markdown('<h3 class="sidebar-glow">Productivity Tips</h3>', unsafe_allow_html=True)
+            tips = [
+                "Break large tasks into smaller, manageable steps.",
+                "Use the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.",
+                "Prioritize your tasks using the Eisenhower Matrix.",
+                "Minimize distractions by turning off notifications during focus time.",
+                "Start your day by tackling the most important or challenging task.",
+            ]
+            tip_index = random.randint(0, len(tips) - 1)
+            st.info(tips[tip_index])
 
 
 # ===== Main Execution =====
