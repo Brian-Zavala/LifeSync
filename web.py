@@ -429,19 +429,18 @@ st.markdown("""
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .dynamic-title {
-        font-size: 2rem;
+    /* Mobile-friendly styles */
+    @media (max-width: 768px) {
+        .dynamic-title {
+            font-size: 2rem;
+        }
+        .st-bw {
+            padding: 15px;
+        }
+        .st-emotion-cache-16txtl3 {
+            padding: 1rem;
+        }
     }
-    .st-bw {
-        padding: 15px;
-    }
-    .st-emotion-cache-16txtl3 {
-        padding: 1rem;
-    }
-}
-
 /* Base styles for input widgets */
 .stTextInput > div > div > input,
 .stSelectbox > div > div > div,
@@ -640,8 +639,15 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+
+    /* Adjust the app container to fill the screen */
+    .stApp {
+        margin-top: -76px;
+    }
+ 
 </style>
 """, unsafe_allow_html=True)
+
 
 st.markdown("""
 <div class="completion-bar-container">
