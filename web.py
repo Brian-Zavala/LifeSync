@@ -1,10 +1,9 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from datetime import datetime, timedelta
 import random
 import time
 import uuid
-from functions import render_task_distribution, render_completion_bar
+from functions import render_task_distribution
 from Database import (
     create_user, load_user_data,
     add_task as db_add_task, complete_task as db_complete_task,
@@ -1115,7 +1114,6 @@ def main():
 
         # Render task distribution and completion bar
         render_task_distribution()
-        render_completion_bar()
 
         # Rewards section
         st.markdown(f"""

@@ -25,16 +25,3 @@ def render_task_distribution():
         )
         st.plotly_chart(fig_pie, use_container_width=True)
 
-def render_completion_bar():
-    if st.session_state.tasks:
-        total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
-        completed_percentage = (len(st.session_state.completed_tasks) / total_tasks) * 100
-        st.markdown(f"""
-        <div style='background-color: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px;'>
-            <h4 style='text-align: center; color: #4CAF50;'>Overall Progress</h4>
-            <div style='background-color: #ddd; border-radius: 5px; height: 20px;'>
-                <div style='background-color: #4CAF50; width: {completed_percentage}%; height: 100%; border-radius: 5px; transition: width 1s ease-in-out;'></div>
-            </div>
-            <p style='text-align: center; color: white;'>{completed_percentage:.1f}% Complete</p>
-        </div>
-        """, unsafe_allow_html=True)
