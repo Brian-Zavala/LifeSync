@@ -24,8 +24,6 @@ def render_task_distribution():
             textfont_size=14,
         )
         st.plotly_chart(fig_pie, use_container_width=True)
-    else:
-        st.info("Add some tasks to see your task distribution!")
 
 def render_completion_bar():
     if st.session_state.tasks:
