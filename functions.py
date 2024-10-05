@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import time
 
 def render_task_distribution():
     if st.session_state.tasks:
@@ -24,4 +25,7 @@ def render_task_distribution():
             textfont_size=14,
         )
         st.plotly_chart(fig_pie, use_container_width=True)
+
+def create_unique_key(base_key):
+    return f"{base_key}_{int(time.time() * 1000)}"
 

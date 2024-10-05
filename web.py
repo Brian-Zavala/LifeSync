@@ -4,7 +4,7 @@ import random
 import time
 import uuid
 from typing import List, Dict, Any
-from functions import render_task_distribution
+from functions import render_task_distribution, create_unique_key
 from Database import (
     create_user, load_user_data,
     add_task as db_add_task, complete_task as db_complete_task,
@@ -12,6 +12,13 @@ from Database import (
 
 # ===== Page Configuration =====
 st.set_page_config(page_title="LifeSync", page_icon="🌟", layout="wide", initial_sidebar_state="expanded")
+
+st.markdown("""
+<style>
+    * {
+       overflow-anchor: none !important;
+       }
+</style>""", unsafe_allow_html=True)
 
 # Custom CSS
 st.markdown("""
@@ -921,21 +928,20 @@ def render_task_filters():
             "Filter by Category",
             options=st.session_state.categories,
             default=[],
-            key="filter_category_multiselect"
+            key=create_unique_key("filter_category_multiselect")
         )
         filter_priority = st.multiselect(
             "Filter by Priority",
             options=["Low", "Medium", "High"],
             default=[],
-            key="filter_priority_multiselect"
+            key=create_unique_key("filter_priority_multiselect")
         )
         filter_due = st.date_input(
             "Filter by Due Date",
             value=None,
-            key="filter_due_date_input"
+            key=create_unique_key("filter_due_date_input")
         )
     return filter_category, filter_priority, filter_due
-
 
 def render_tasks():
     filter_category, filter_priority, filter_due = render_task_filters()

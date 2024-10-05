@@ -1,16 +1,15 @@
-import os
+import streamlit as st
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime
 
 # Get MongoDB Atlas connection string from environment variable
-MONGO_CONNECT = os.environ.get('MONGO_LIFESYNC')
-
+uri = st.secrets["uri"]
 print("Attempting to connect to MongoDB...")
 
 # Initialize MongoDB client
 try:
-    client = MongoClient(MONGO_CONNECT, server_api=ServerApi('1'))
+    client = MongoClient(uri, server_api=ServerApi('1'))
     # Send a ping to confirm a successful connection
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
