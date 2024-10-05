@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import random
 import time
 import uuid
+from typing import List, Dict, Any
 from functions import render_task_distribution
 from Database import (
     create_user, load_user_data,
@@ -15,19 +16,23 @@ st.set_page_config(page_title="LifeSync", page_icon="🌟", layout="wide", initi
 # Custom CSS
 st.markdown("""
 <style>
+/* Base styles and imports */
+
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
 
-    * {
-        font-family: 'Poppins', sans-serif;
-        box-sizing: border-box;
-    }
 
-    .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        background-attachment: fixed;
-    }
-   /* Completion Bar Styles */
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+}
+
+/* Completion Bar Styles */
 .completion-bar-container {
     position: fixed;
     top: 0;
@@ -67,380 +72,279 @@ st.markdown("""
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
 }
-        .login-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-    }
-    .login-title {
-        font-size: 2.5rem;
-        margin: 1rem 0;
-        color: #ffffff;
-        text-align: center;
-    }
-    .login-form {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2rem;
-        border-radius: 10px;
-        backdrop-filter: blur(10px);
-        width: 100%;
-        max-width: 400px;
-    }
-    .stButton > button {
-        width: 100%;
-    }
-    /* Productivity Gauge Styles */
-    .productivity-gauge {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 10px;
-        margin-top: 10px;
-    }
 
-    .productivity-gauge h3 {
-        color: white;
-        margin-bottom: 5px;
-    }
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
+/* Login Container Styles */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
 
-    .dynamic-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 3rem;
-        font-weight: 700;
-        color: #ffffff;
-        text-align: center;
-        padding: 1rem 0;
-        margin-bottom: 1rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 10px;
-        position: relative;
-        overflow: hidden;
-        animation: glow 2s ease-in-out infinite alternate;
-    }
+.login-title {
+    font-size: 2.5rem;
+    margin: 1rem 0;
+    color: #ffffff;
+    text-align: center;
+}
 
-    @keyframes glow {
-        from {
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 75px #ff00de;
-        }
-        to {
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
-        }
-    }
+.login-form {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 400px;
+}
 
-    .dynamic-title::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(
-            to bottom right,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.1) 50%,
-            rgba(255, 255, 255, 0) 100%
-        );
-        animation: rotate 10s linear infinite;
-    }
+/* Button Styles */
+.stButton > button {
+    width: 100%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    @keyframes rotate {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+.stButton > button:hover {
+    background: linear-gradient(45deg, #764ba2, #667eea);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
 
-    .st-bw {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        padding: 20px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        transition: all 0.3s ease;
-    }
+.stButton > button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-    .st-bw:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
-    }
+/* Productivity Gauge Styles */
+.productivity-gauge {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+}
 
-    .st-emotion-cache-16txtl3 {
-        padding: 1.5rem;
-        border-radius: 15px;
-        background-color: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        transition: all 0.3s ease;
-    }
+.productivity-gauge h3 {
+    color: white;
+    margin-bottom: 5px;
+}
 
-    .st-emotion-cache-16txtl3:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
-    }
+/* Dynamic Title Styles */
+.dynamic-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    animation: glow 2s ease-in-out infinite alternate;
+}
 
-    .task-card {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 10px;
-        margin-bottom: 10px;
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        animation: fadeIn 0.5s ease-out;
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 75px #ff00de;
     }
+    to {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+    }
+}
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+.dynamic-title::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: rotate 10s linear infinite;
+}
 
-    .task-card:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-        transform: translateX(5px);
-    }
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-    .reward-card {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 10px;
-        margin-bottom: 10px;
-        backdrop-filter: blur(5px);
-        text-align: center;
-        transition: all 0.3s ease;
-        animation: pulse 2s infinite;
-    }
+/* Card and Widget Styles */
+.st-bw, .st-emotion-cache-16txtl3 {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    transition: all 0.3s ease;
+}
 
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
+.st-bw:hover, .st-emotion-cache-16txtl3:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+}
 
-    .reward-card:hover {
-        background-color: rgba(255, 255, 255, 0.2);
-        animation: none;
-        transform: scale(1.1);
-    }
+/* Task and Reward Card Styles */
+.task-card, .reward-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+}
 
-    .st-bv, .st-bz {
-        color: #ffffff;
-    }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-    .st-cx {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: #ffffff;
-    }
+.task-card:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
 
-    .st-hq {
-        background-color: #7e57c2;
-        color: #ffffff;
-    }
+.reward-card {
+    text-align: center;
+    animation: pulse 2s infinite;
+}
 
-    /* Sidebar styles */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(
-            45deg,
-            rgba(76, 175, 80, 0.95),
-            rgba(33, 150, 243, 0.95)
-        ) !important;
-        background-size: 200% 200% !important;
-        animation: gradientShift 15s ease infinite !important;
-    }
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
 
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+.reward-card:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    animation: none;
+    transform: scale(1.1);
+}
 
-    /* Custom checkbox */
-    input[type="checkbox"] {
-        appearance: none;
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        border: 2px solid #ffffff;
-        border-radius: 50%;
-        outline: none;
-        transition: all 0.3s ease;
-        position: relative;
-        cursor: pointer;
-    }
+/* Sidebar Styles */
+[data-testid="stSidebar"] {
+    background: linear-gradient(
+        45deg,
+        rgba(76, 175, 80, 0.95),
+        rgba(33, 150, 243, 0.95)
+    ) !important;
+    background-size: 200% 200% !important;
+    animation: gradientShift 15s ease infinite !important;
+}
 
-    input[type="checkbox"]:checked {
-        background-color: #4CAF50;
-        border-color: #4CAF50;
-    }
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-    input[type="checkbox"]:checked::before {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #ffffff;
-        font-size: 14px;
-    }
+/* Custom Checkbox Styles */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    outline: none;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
 
-    /* Gauge styles */
-    .gauge-container {
-        position: relative;
-        width: 100px;
-        height: 50px;
-        margin: 0 auto;
-        overflow: hidden;
-    }
+input[type="checkbox"]:checked {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+}
 
-    .gauge-bg {
-        width: 100px;
-        height: 50px;
-        background: conic-gradient(from 180deg, #4CAF50 0deg, #2196F3 180deg, #9E9E9E 360deg);
-        border-radius: 50px 50px 0 0;
-    }
+input[type="checkbox"]:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 14px;
+}
 
-    .gauge-fill {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100px;
-        height: 50px;
-        background: #9E9E9E;
-        border-radius: 50px 50px 0 0;
-        transform-origin: center bottom;
-        transition: transform 1s ease-out;
-    }
+/* Gauge Styles */
+.gauge-container {
+    position: relative;
+    width: 100px;
+    height: 50px;
+    margin: 0 auto;
+    overflow: hidden;
+}
 
-    .gauge-cover {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        width: 90px;
-        height: 45px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 45px 45px 0 0;
-        backdrop-filter: blur(5px);
-    }
+.gauge-bg {
+    width: 100px;
+    height: 50px;
+    background: conic-gradient(from 180deg, #4CAF50 0deg, #2196F3 180deg, #9E9E9E 360deg);
+    border-radius: 50px 50px 0 0;
+}
 
-    .gauge-percentage {
-        position: absolute;
-        bottom: 5px;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        font-size: 14px;
-        font-weight: bold;
-        color: white;
-    }
+.gauge-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 50px;
+    background: #9E9E9E;
+    border-radius: 50px 50px 0 0;
+    transform-origin: center bottom;
+    transition: transform 1s ease-out;
+}
 
-    /* Custom glow effect for points text */
-    .points-glow {
-        color: #00ffff;
-        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
-        animation: points-pulse 2s infinite;
-    }
+.gauge-cover {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 90px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 45px 45px 0 0;
+    backdrop-filter: blur(5px);
+}
 
-    @keyframes points-pulse {
-        0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
-        50% { text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff, 0 0 35px #00ffff, 0 0 45px #00ffff; }
-        100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
-    }
-        /* Sidebar styles */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(
-            45deg,
-            rgba(76, 175, 80, 0.95),
-            rgba(33, 150, 243, 0.95)
-        ) !important;
-        background-size: 200% 200% !important;
-        animation: gradientShift 15s ease infinite !important;
-    }
+.gauge-percentage {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
 
-    [data-testid="stSidebar"] .stTextInput > div > div > input,
-    [data-testid="stSidebar"] .stSelectbox > div > div > div,
-    [data-testid="stSidebar"] .stDateInput > div > div > input {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border-radius: 5px !important;
-        transition: all 0.3s ease !important;
-    }
+/* Points Glow Effect */
+.points-glow {
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+    animation: points-pulse 2s infinite;
+}
 
-    [data-testid="stSidebar"] .stTextInput > div > div > input:hover,
-    [data-testid="stSidebar"] .stSelectbox > div > div > div:hover,
-    [data-testid="stSidebar"] .stDateInput > div > div > input:hover {
-        background-color: rgba(255, 255, 255, 0.2) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
-    }
+@keyframes points-pulse {
+    0% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+    50% { text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff, 0 0 35px #00ffff, 0 0 45px #00ffff; }
+    100% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+}
 
-    [data-testid="stSidebar"] .stButton > button {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border-radius: 5px !important;
-        transition: all 0.3s ease !important;
-    }
-
-    [data-testid="stSidebar"] .stButton > button:hover {
-        background-color: rgba(255, 255, 255, 0.2) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    [data-testid="stSidebar"] .stMarkdown p {
-        color: white !important;
-        transition: all 0.3s ease !important;
-    }
-
-    [data-testid="stSidebar"] .stMarkdown p:hover {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-    }
-
-    .sidebar-glow {
-        animation: sidebarGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes sidebarGlow {
-        from {
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #00ffff, 0 0 35px #00ffff, 0 0 40px #00ffff;
-        }
-        to {
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #00ffff, 0 0 55px #00ffff, 0 0 60px #00ffff;
-        }
-    }
-    /* Custom styles for selectboxes and other widgets */
-    .stSelectbox, .stTextInput, .stDateInput {
-        background: linear-gradient(45deg, #ff00de, #00ffff);
-        border-radius: 10px;
-        padding: 2px;
-    }
-
-    .stSelectbox > div, .stTextInput > div, .stDateInput > div {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .stSelectbox > div:hover, .stTextInput > div:hover, .stDateInput > div:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Mobile-friendly styles */
-    @media (max-width: 768px) {
-        .dynamic-title {
-            font-size: 2rem;
-        }
-        .st-bw {
-            padding: 15px;
-        }
-        .st-emotion-cache-16txtl3 {
-            padding: 1rem;
-        }
-    }
-/* Base styles for input widgets */
+/* Input Widget Styles */
 .stTextInput > div > div > input,
 .stSelectbox > div > div > div,
 .stDateInput > div > div > input {
@@ -450,12 +354,8 @@ st.markdown("""
     transition: all 0.3s ease !important;
     border: none !important;
     padding: 10px !important;
-    position: relative;
-    left: 4px;
-    z-index: 1;
 }
 
-/* Glowing effect container */
 .stTextInput > div > div,
 .stSelectbox > div > div,
 .stDateInput > div > div {
@@ -464,7 +364,6 @@ st.markdown("""
     border-radius: 12px;
 }
 
-/* Infinite rotating glow effect */
 .stTextInput > div > div::before,
 .stSelectbox > div > div::before,
 .stDateInput > div > div::before {
@@ -488,7 +387,6 @@ st.markdown("""
     transition: opacity 0.3s ease;
 }
 
-/* Hover and focus styles for input widgets */
 .stTextInput > div > div:hover::before,
 .stTextInput > div > div:focus-within::before,
 .stSelectbox > div > div:hover::before,
@@ -497,43 +395,17 @@ st.markdown("""
     opacity: 1;
 }
 
-.stTextInput > div > div > input:hover,
-.stTextInput > div > div > input:focus,
-.stSelectbox > div > div > div:hover,
-.stDateInput > div > div > input:hover,
-.stDateInput > div > div > input:focus {
-    background: linear-gradient(45deg, rgba(255, 0, 222, 0.5), rgba(0, 255, 255, 0.5));
-    transform: translateY(-2px) scale(1.02) !important;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Rotation animation for the glow effect */
 @keyframes rotate-glow {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Custom class for additional widget glow (optional) */
-.widget-glow {
-    animation: widget-pulse 2s ease-in-out infinite alternate;
-}
-
-@keyframes widget-pulse {
-    from {
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 0, 222, 0.5), 0 0 15px rgba(0, 255, 255, 0.5);
-    }
-    to {
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 0, 222, 0.7), 0 0 30px rgba(0, 255, 255, 0.7);
-    }
-}
- 
+/* Custom Checkbox Styles */
 .stCheckbox {
     position: relative;
     padding-left: 40px;
-    padding-down: 10px;
     cursor: pointer;
-    left: -20px;
-    font-size: 140px;
+    font-size: 16px;
     user-select: none;
     display: flex;
     align-items: center;
@@ -544,14 +416,14 @@ st.markdown("""
     position: relative;
     padding-left: 40px;
     cursor: pointer;
-    line-height: 29px; /* Adjust this value to move the text up or down relative to the checkbox */
+    line-height: 29px;
 }
 
 .stCheckbox > label::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 54%;
+    top: 50%;
     transform: translateY(-50%);
     width: 30px;
     height: 30px;
@@ -561,11 +433,12 @@ st.markdown("""
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
 }
 
+/* Continuation of Custom Checkbox Styles */
 .stCheckbox > label::after {
     content: "";
     position: absolute;
     left: 5px;
-    top: 40%;
+    top: 50%;
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
@@ -590,16 +463,6 @@ st.markdown("""
     animation: rotate 4s linear infinite;
 }
 
-.stCheckbox > label > span {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    height: 30px;
-    width: 30px;
-    background-color: transparent;
-}
-
 .stCheckbox input:checked + label::before {
     background-color: #3498db;
     animation: pulse 0.5s ease-out;
@@ -620,8 +483,8 @@ st.markdown("""
 }
 
 @keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
 }
 
 @keyframes pulse {
@@ -634,175 +497,69 @@ st.markdown("""
     0% { height: 0; }
     100% { height: 12px; }
 }
-    /* Custom button styles */
-    .stButton > button {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+/* Mobile-friendly styles */
+@media (max-width: 768px) {
+    .dynamic-title {
+        font-size: 2rem;
     }
-
-    .stButton > button:hover {
-        background: linear-gradient(45deg, #764ba2, #667eea);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    .st-bw {
+        padding: 15px;
     }
-
-    .stButton > button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .st-emotion-cache-16txtl3 {
+        padding: 1rem;
     }
+}
 
-    /* Redeem button style */
-    .redeem-button {
-        background: linear-gradient(45deg, #00C9FF, #92FE9D) !important;
-        color: #1E1E1E !important;
-        font-size: 0.8rem !important;
-        padding: 0.3rem 0.6rem !important;
-        border-radius: 20px !important;
-    }
+/* Hide Streamlit elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
 
-    .redeem-button:hover {
-        background: linear-gradient(45deg, #92FE9D, #00C9FF) !important;
-    }
+/* Adjust the app container to fill the screen */
+.stApp {
+    margin-top: -76px;
+}
 
-    /* Custom button styles to match input widgets */
-    .stButton > button, 
-    button[kind="secondaryFormSubmit"],
-    .redeem-button {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 4px !important;
-        padding: 0.5rem 1rem !important;
-        font-weight: normal !important;
-        transition: all 0.3s ease !important;
-        backdrop-filter: blur(5px) !important;
-    }
-
-    .stButton > button:hover, 
-    button[kind="secondaryFormSubmit"]:hover,
-    .redeem-button:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    .stButton > button:active, 
-    button[kind="secondaryFormSubmit"]:active,
-    .redeem-button:active {
-        transform: translateY(0) !important;
-        box-shadow: none !important;
-    }
-
-    /* Adjust redeem button size */
-    .redeem-button {
-        font-size: 0.8rem !important;
-        padding: 0.3rem 0.6rem !important;
-    }
-
-    /* Ensure text color consistency */
-    .stButton > button > div > p,
-    button[kind="secondaryFormSubmit"] > div > p,
-    .redeem-button > div > p {
-        color: white !important;
-    }
-            /* Hide Streamlit elements */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-
-    /* Adjust the app container to fill the screen */
-    .stApp {
-        margin-top: -76px;
-    }
- 
-</style>
-""", unsafe_allow_html=True)
-
-
-st.markdown("""
-<div class="completion-bar-container">
-    <div class="completion-bar" id="completionBar">
-        <div class="completion-bubbles" id="completionBubbles"></div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# JavaScript for updating the completion bar
-st.markdown("""
+/* JavaScript Optimizations */
 <script>
-    function updateCompletionBar(percentage) {
-        const bar = document.getElementById('completionBar');
-        bar.style.width = percentage + '%';
-        
-        const bubbles = document.getElementById('completionBubbles');
-        const bubbleCount = Math.floor(percentage / 5);  // One bubble for every 5%
-        bubbles.innerHTML = '';
-        
-        for (let i = 0; i < bubbleCount; i++) {
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.style.left = Math.random() * 100 + '%';
-            bubble.style.top = Math.random() * 100 + '%';
-            bubble.style.width = Math.random() * 10 + 5 + 'px';
-            bubble.style.height = bubble.style.width;
-            bubble.style.animationDelay = Math.random() * 2 + 's';
-            bubbles.appendChild(bubble);
-        }
+// Function to update the completion bar
+function updateCompletionBar(percentage) {
+    const bar = document.getElementById('completionBar');
+    const bubbles = document.getElementById('completionBubbles');
+    
+    bar.style.width = `${percentage}%`;
+    
+    bubbles.innerHTML = '';
+    const bubbleCount = Math.floor(percentage / 5);
+    
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.top = `${Math.random() * 100}%`;
+        bubble.style.width = `${Math.random() * 10 + 5}px`;
+        bubble.style.height = bubble.style.width;
+        bubble.style.animationDelay = `${Math.random() * 2}s`;
+        bubbles.appendChild(bubble);
     }
-</script>
-""", unsafe_allow_html=True)
+}
 
-# Apply custom styling to buttons
-st.markdown("""
-<script>
-document.addEventListener('DOMContentLoaded', (event) => {
-    // Style the Add Task button
-    var addTaskButton = document.querySelector('button[kind="primaryFormSubmit"]');
-    if (addTaskButton) {
-        addTaskButton.classList.add('add-task-button');
-    }
-
-    // Style the Redeem buttons
-    var redeemButtons = document.querySelectorAll('button[data-baseweb="button"]:not([kind="secondaryFormSubmit"])');
-    redeemButtons.forEach(button => {
-        if (button.textContent.includes('🎁 Redeem')) {
-            button.classList.add('redeem-button');
-        }
-    });
-});
-</script>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<script>
 // Function to toggle the sidebar
 function toggleSidebar() {
     const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
     const sidebarContent = sidebar.querySelector('[data-testid="stSidebarContent"]');
-    if (sidebarContent.style.width === '0px' || sidebarContent.style.width === '') {
-        sidebarContent.style.width = '350px';
-        sidebar.style.width = '350px';
-        sidebar.style.opacity = 1;
-        sidebar.style.pointerEvents = 'auto';
-    } else {
-        sidebarContent.style.width = '0px';
-        sidebar.style.width = '0px';
-        sidebar.style.opacity = 0;
-        sidebar.style.pointerEvents = 'none';
-    }
+    const isOpen = sidebarContent.style.width !== '0px' && sidebarContent.style.width !== '';
+    
+    sidebarContent.style.width = isOpen ? '0px' : '350px';
+    sidebar.style.width = isOpen ? '0px' : '350px';
+    sidebar.style.opacity = isOpen ? 0 : 1;
+    sidebar.style.pointerEvents = isOpen ? 'none' : 'auto';
 }
 
 // Function to apply glow effect to dynamic elements
 function applyGlowEffect() {
-    const glowElements = document.querySelectorAll('.points-glow');
-    glowElements.forEach(elem => {
+    document.querySelectorAll('.points-glow').forEach(elem => {
         elem.style.textShadow = `
             0 0 10px #00ffff,
             0 0 20px #00ffff,
@@ -814,8 +571,7 @@ function applyGlowEffect() {
 
 // Function to enhance hover effects
 function enhanceHoverEffects() {
-    const hoverElements = document.querySelectorAll('.stSelectbox > div, .stTextInput > div, .stDateInput > div');
-    hoverElements.forEach(elem => {
+    document.querySelectorAll('.stSelectbox > div, .stTextInput > div, .stDateInput > div').forEach(elem => {
         elem.addEventListener('mouseenter', () => {
             elem.style.transform = 'translateY(-2px)';
             elem.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
@@ -829,8 +585,7 @@ function enhanceHoverEffects() {
 
 // Function to animate task cards
 function animateTaskCards() {
-    const taskCards = document.querySelectorAll('.task-card');
-    taskCards.forEach((card, index) => {
+    document.querySelectorAll('.task-card').forEach((card, index) => {
         card.style.animation = `fadeIn 0.5s ease-out ${index * 0.1}s`;
     });
 }
@@ -855,8 +610,7 @@ function enhanceSidebarEffects() {
         });
     });
 
-    const sidebarTexts = document.querySelectorAll('[data-testid="stSidebar"] .stMarkdown p');
-    sidebarTexts.forEach(text => {
+    document.querySelectorAll('[data-testid="stSidebar"] .stMarkdown p').forEach(text => {
         text.addEventListener('mouseenter', () => {
             text.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.5)';
         });
@@ -868,8 +622,7 @@ function enhanceSidebarEffects() {
 
 // Function to apply sidebar glow
 function applySidebarGlow() {
-    const glowElements = document.querySelectorAll('.sidebar-glow');
-    glowElements.forEach(elem => {
+    document.querySelectorAll('.sidebar-glow').forEach(elem => {
         elem.style.animation = 'sidebarGlow 2s ease-in-out infinite alternate';
     });
 }
@@ -879,35 +632,18 @@ function enhanceWidgets() {
     const widgets = document.querySelectorAll('.stTextInput > div > div > input, .stSelectbox > div > div > div, .stDateInput > div > div > input');
 
     widgets.forEach(widget => {
-        widget.addEventListener('mouseenter', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
-            widget.classList.add('widget-glow');
+        ['mouseenter', 'focus', 'touchstart'].forEach(event => {
+            widget.addEventListener(event, () => {
+                widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
+                widget.classList.add('widget-glow');
+            });
         });
 
-        widget.addEventListener('mouseleave', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
-            widget.classList.remove('widget-glow');
-        });
-
-        widget.addEventListener('focus', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
-            widget.classList.add('widget-glow');
-        });
-
-        widget.addEventListener('blur', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
-            widget.classList.remove('widget-glow');
-        });
-
-        // For touch devices
-        widget.addEventListener('touchstart', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
-            widget.classList.add('widget-glow');
-        });
-
-        widget.addEventListener('touchend', () => {
-            widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
-            widget.classList.remove('widget-glow');
+        ['mouseleave', 'blur', 'touchend'].forEach(event => {
+            widget.addEventListener(event, () => {
+                widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
+                widget.classList.remove('widget-glow');
+            });
         });
     });
 }
@@ -924,10 +660,7 @@ function runCustomScripts() {
 }
 
 // Add click event listener to the toggle button
-const toggleButton = document.querySelector('.sidebar-toggle');
-if (toggleButton) {
-    toggleButton.addEventListener('click', toggleSidebar);
-}
+document.querySelector('.sidebar-toggle')?.addEventListener('click', toggleSidebar);
 
 // Run custom scripts when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', runCustomScripts);
@@ -941,7 +674,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 
 # ===== Cached Functions =====
 @st.cache_data(ttl=3600)
-def get_motivation_quote():
+def get_motivation_quote() -> str:
     quotes = [
         "The only way to do great work is to love what you do. - Steve Jobs",
         "Believe you can and you're halfway there. - Theodore Roosevelt",
@@ -951,9 +684,8 @@ def get_motivation_quote():
     ]
     return random.choice(quotes)
 
-
 @st.cache_data(ttl=3600)
-def get_productivity_tips():
+def get_productivity_tips() -> List[str]:
     return [
         "Break large tasks into smaller, manageable steps.",
         "Use the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.",
@@ -962,9 +694,8 @@ def get_productivity_tips():
         "Start your day by tackling the most important or challenging task.",
     ]
 
-
 @st.cache_resource
-def get_reward_options():
+def get_reward_options() -> List[Dict[str, Any]]:
     return [
         {'name': 'Coffee Break', 'points': 10},
         {'name': '15min Social Media', 'points': 20},
@@ -972,30 +703,24 @@ def get_reward_options():
         {'name': 'Treat Yourself', 'points': 100}
     ]
 
-
 @st.cache_data(ttl=60)
-def load_cached_user_data(username):
+def load_cached_user_data(username: str) -> Dict[str, Any]:
     return load_user_data(username)
 
-
-# Helper Functions
+# ===== Helper Functions =====
 def login_user():
     username = st.session_state.username
     user_data = load_user_data(username)
     if user_data:
         st.session_state.user = username
-        for key, value in user_data.items():
-            st.session_state[key] = value
+        st.session_state.update(user_data)
     else:
         st.error("User not found. Please create an account.")
 
-
 def logout_user():
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    st.session_state.clear()
     st.session_state.user = None
     st.success("Logged out successfully!")
-
 
 def register_user():
     username = st.session_state.new_username
@@ -1006,7 +731,6 @@ def register_user():
         login_user()
     else:
         st.error(message)
-
 
 @st.cache_data(ttl=60)
 def update_completion_bar():
@@ -1023,8 +747,7 @@ def update_completion_bar():
         unsafe_allow_html=True
     )
 
-
-def add_task(task, due_date, priority, category):
+def add_task(task: str, due_date: datetime.date, priority: str, category: str) -> bool:
     if task.strip():
         new_task = {
             "task": task,
@@ -1041,9 +764,7 @@ def add_task(task, due_date, priority, category):
         return True
     return False
 
-
-# Update the complete_task function
-def complete_task(task_id):
+def complete_task(task_id: str) -> bool:
     task = next((t for t in st.session_state.tasks if t['id'] == task_id), None)
     if task:
         st.session_state.tasks.remove(task)
@@ -1061,10 +782,14 @@ def complete_task(task_id):
 
 def update_streak():
     today = datetime.now().date()
-    if st.session_state.last_completed == (today - timedelta(days=1)).isoformat():
+    last_completed = datetime.fromisoformat(
+        st.session_state.last_completed).date() if st.session_state.last_completed else None
+
+    if last_completed == today - timedelta(days=1):
         st.session_state.streaks += 1
-    elif st.session_state.last_completed != today.isoformat():
+    elif last_completed != today:
         st.session_state.streaks = 1
+
     st.session_state.last_completed = today.isoformat()
     update_user_stats(st.session_state.user, {
         "streaks": st.session_state.streaks,
@@ -1072,7 +797,7 @@ def update_streak():
     })
 
 
-def award_points(priority):
+def award_points(priority: str):
     points = {"Low": 5, "Medium": 10, "High": 15}
     st.session_state.user_points += points[priority]
     update_user_stats(st.session_state.user, {"user_points": st.session_state.user_points})
@@ -1081,7 +806,8 @@ def award_points(priority):
 def update_completion_rate():
     total_tasks = len(st.session_state.tasks) + len(st.session_state.completed_tasks)
     st.session_state.completion_rate = (
-            len(st.session_state.completed_tasks) / total_tasks * 100) if total_tasks > 0 else 0
+            len(st.session_state.completed_tasks) / total_tasks * 100
+    ) if total_tasks > 0 else 0
     update_user_stats(st.session_state.user, {"completion_rate": st.session_state.completion_rate})
 
 
@@ -1089,7 +815,7 @@ def handle_task_completion():
     task_id = st.session_state.get('task_to_complete')
     if task_id:
         if complete_task(task_id):
-            st.success(f"Task completed successfully!")
+            st.success("Task completed successfully!")
         else:
             st.error("There was an error completing the task.")
         del st.session_state['task_to_complete']
@@ -1116,159 +842,186 @@ def main():
         st.session_state.completion_rate = 0
     if 'last_completed' not in st.session_state:
         st.session_state.last_completed = None
-
-    # Update completion bar on page load
-    update_completion_bar()
     if 'logout_key' not in st.session_state:
         st.session_state.logout_key = None
 
+    # Update completion bar on page load
+    update_completion_bar()
+
     if not st.session_state.user:
-        st.markdown("""
-             <div class="dynamic-title">
-                 Welcome to LifeSync
-             </div>
-         """, unsafe_allow_html=True)
-
-        # Login/Register UI
-        col1, col2 = st.columns(2)
-        with col1:
-            st.subheader("Login")
-            st.text_input("Username", key="username")
-            st.button("Login", on_click=login_user, key="login_button")
-        with col2:
-            st.subheader("Register")
-            st.text_input("New Username", key="new_username")
-            st.button("Register", on_click=register_user, key="register_button")
+        render_login_page()
     else:
-        # Generate a unique key for the logout button if it doesn't exist
-        if st.session_state.logout_key is None:
-            st.session_state.logout_key = f"logout_{st.session_state.user}_{int(time.time())}"
+        render_main_app()
 
-        completion_rate = st.session_state.completion_rate
+
+def render_login_page():
+    st.markdown("""
+        <div class="dynamic-title">
+            Welcome to LifeSync
+        </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Login")
+        st.text_input("Username", key="username")
+        st.button("Login", on_click=login_user, key="login_button")
+    with col2:
+        st.subheader("Register")
+        st.text_input("New Username", key="new_username")
+        st.button("Register", on_click=register_user, key="register_button")
+
+
+def render_main_app():
+    # Generate a unique key for the logout button if it doesn't exist
+    if st.session_state.logout_key is None:
+        st.session_state.logout_key = f"logout_{st.session_state.user}_{int(time.time())}"
+
+    render_completion_gauge()
+    render_task_input_form()
+    render_task_filters()
+    render_tasks()
+    render_task_distribution()
+    render_rewards_section()
+    render_sidebar()
+
+
+def render_completion_gauge():
+    completion_rate = st.session_state.completion_rate
+    st.markdown(f"""
+        <div class="gauge-container">
+            <div class="gauge-bg"></div>
+            <div class="gauge-fill" style="transform: rotate({completion_rate * 1.8}deg);"></div>
+            <div class="gauge-cover"></div>
+            <div class="gauge-percentage">{completion_rate:.0f}%</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+def render_task_input_form():
+    with st.form("quick_add_form"):
+        task = st.text_input("Task", key="task_input")
+        col1, col2, col3 = st.columns([2, 1, 1])
+        with col1:
+            due_date = st.date_input("Due Date", key="due_date_input")
+        with col2:
+            priority = st.selectbox("Priority", ["Low", "Medium", "High"], key="priority_select")
+        with col3:
+            category = st.selectbox("Category", st.session_state.categories, key="category_select")
+        submitted = st.form_submit_button("Add Task")
+
+    if submitted:
+        add_task(task, due_date, priority, category)
+        update_completion_bar()
+
+
+def render_task_filters():
+    with st.expander("Task Filters", expanded=False):
+        filter_category = st.multiselect(
+            "Filter by Category",
+            options=st.session_state.categories,
+            default=[],
+            key="filter_category_multiselect"
+        )
+        filter_priority = st.multiselect(
+            "Filter by Priority",
+            options=["Low", "Medium", "High"],
+            default=[],
+            key="filter_priority_multiselect"
+        )
+        filter_due = st.date_input(
+            "Filter by Due Date",
+            value=None,
+            key="filter_due_date_input"
+        )
+    return filter_category, filter_priority, filter_due
+
+
+def render_tasks():
+    filter_category, filter_priority, filter_due = render_task_filters()
+
+    for task in st.session_state.tasks:
+        if should_display_task(task, filter_category, filter_priority, filter_due):
+            render_task(task)
+
+
+def should_display_task(task, filter_category, filter_priority, filter_due):
+    return (not filter_category or task['category'] in filter_category) and \
+        (not filter_priority or task['priority'] in filter_priority) and \
+        (not filter_due or task['due_date'] == filter_due.isoformat())
+
+
+def render_task(task):
+    with st.container():
+        cols = st.columns([0.1, 2, 1, 1, 1])
+        with cols[0]:
+            if st.checkbox("", key=f"task_checkbox_{task['id']}"):
+                complete_task(task['id'])
+                update_completion_bar()
+                st.rerun()
+        with cols[1]:
+            st.markdown(f"**{task['task']}**")
+        with cols[2]:
+            st.write(f"Due: {task['due_date']}")
+        with cols[3]:
+            priority_color = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}
+            st.write(f"{priority_color[task['priority']]} {task['priority']}")
+        with cols[4]:
+            st.write(f"📁 {task['category']}")
+
+
+def render_rewards_section():
+    st.markdown("""
+        <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
+            <h3 class='points-glow'>Reward Center</h3>
+        </div>
+        <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
+            <h3 class='points-glow'>You have {points} points to spend!</h3>
+        </div>
+    """.format(points=st.session_state.user_points), unsafe_allow_html=True)
+
+    reward_cols = st.columns(2)
+    for idx, reward in enumerate(get_reward_options()):
+        with reward_cols[idx % 2]:
+            render_reward(reward, idx)
+
+
+def render_reward(reward, idx):
+    with st.container():
         st.markdown(f"""
-            <div class="gauge-container">
-                <div class="gauge-bg"></div>
-                <div class="gauge-fill" style="transform: rotate({completion_rate * 1.8}deg);"></div>
-                <div class="gauge-cover"></div>
-                <div class="gauge-percentage">{completion_rate:.0f}%</div>
+            <div class='reward-card'>
+                <h4>{reward['name']}</h4>
+                <p>{reward['points']} points</p>
             </div>
         """, unsafe_allow_html=True)
-
-        with st.form("quick_add_form"):
-            task = st.text_input("Task", key="task_input")
-            col1, col2, col3 = st.columns([2, 1, 1])
-            with col1:
-                due_date = st.date_input("Due Date", key="due_date_input")
-            with col2:
-                priority = st.selectbox("Priority", ["Low", "Medium", "High"], key="priority_select")
-            with col3:
-                category = st.selectbox("Category", st.session_state.categories, key="category_select")
-            submitted = st.form_submit_button("Add Task")
-
-        if submitted:
-            add_task(task, due_date, priority, category)
-            update_completion_bar()
-
-        # Task filters
-        with st.expander("Task Filters", expanded=False):
-            filter_category = st.multiselect(
-                "Filter by Category",
-                options=st.session_state.categories,
-                default=[],
-                key="filter_category_multiselect"
-            )
-            filter_priority = st.multiselect(
-                "Filter by Priority",
-                options=["Low", "Medium", "High"],
-                default=[],
-                key="filter_priority_multiselect"
-            )
-            filter_due = st.date_input(
-                "Filter by Due Date",
-                value=None,
-                key="filter_due_date_input"
-            )
-
-        # Display tasks
-        for index, task in enumerate(st.session_state.tasks):
-            if (not filter_category or task['category'] in filter_category) and \
-                    (not filter_priority or task['priority'] in filter_priority) and \
-                    (not filter_due or task['due_date'] == filter_due.isoformat()):
-                with st.container():
-                    cols = st.columns([0.1, 2, 1, 1, 1])
-                    with cols[0]:
-                        if st.checkbox("", key=f"task_checkbox_{task['id']}"):
-                            complete_task(task['id'])
-                            update_completion_bar()
-                            st.rerun()
-                    with cols[1]:
-                        st.markdown(f"**{task['task']}**")
-                    with cols[2]:
-                        st.write(f"Due: {task['due_date']}")
-                    with cols[3]:
-                        priority_color = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}
-                        st.write(f"{priority_color[task['priority']]} {task['priority']}")
-                    with cols[4]:
-                        st.write(f"📁 {task['category']}")
-
-        # Render task distribution and completion bar
-        render_task_distribution()
-
-        # Rewards section
-        st.markdown(f"""
-            <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
-                <h3 class='points-glow'>Reward Center</h3>
-            </div>
-            """, unsafe_allow_html=True)
-        st.markdown(f"""
-            <div style='background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; text-align: center;'>
-                <h3 class='points-glow'>You have {st.session_state.user_points} points to spend!</h3>
-            </div>
-            """, unsafe_allow_html=True)
-
-        reward_cols = st.columns(2)
-        for idx, reward in enumerate(st.session_state.rewards):
-            with reward_cols[idx % 2]:
-                with st.container():
-                    st.markdown(f"""
-                        <div class='reward-card'>
-                            <h4>{reward['name']}</h4>
-                            <p>{reward['points']} points</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-                    if st.button("Redeem", key=f"redeem_{reward['name']}_{idx}"):
-                        if st.session_state.user_points >= reward['points']:
-                            st.session_state.user_points -= reward['points']
-                            update_user_stats(st.session_state.user, {"user_points": st.session_state.user_points})
-                            st.success(f"You've redeemed {reward['name']}!")
-                            st.balloons()
-                        else:
-                            st.error("Not enough points!")
-
-        # Sidebar
-        with st.sidebar:
-            st.button("Logout", on_click=logout_user, key=st.session_state.logout_key)
-
-            st.markdown('<h3 class="sidebar-glow">LifeSync Stats</h3>', unsafe_allow_html=True)
-            st.metric("🏆 Streak", f"{st.session_state.streaks} days")
-            st.metric("💎 Points", st.session_state.user_points)
-
-            st.markdown('<h3 class="sidebar-glow">Daily Inspiration</h3>', unsafe_allow_html=True)
-            st.info(get_motivation_quote())
-
-            # Productivity Tips
-            st.markdown('<h3 class="sidebar-glow">Productivity Tips</h3>', unsafe_allow_html=True)
-            tips = [
-                "Break large tasks into smaller, manageable steps.",
-                "Use the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.",
-                "Prioritize your tasks using the Eisenhower Matrix.",
-                "Minimize distractions by turning off notifications during focus time.",
-                "Start your day by tackling the most important or challenging task.",
-            ]
-            tip_index = random.randint(0, len(tips) - 1)
-            st.info(tips[tip_index])
+        if st.button("Redeem", key=f"redeem_{reward['name']}_{idx}"):
+            handle_reward_redemption(reward)
 
 
-# ===== Main Execution =====
+def handle_reward_redemption(reward):
+    if st.session_state.user_points >= reward['points']:
+        st.session_state.user_points -= reward['points']
+        update_user_stats(st.session_state.user, {"user_points": st.session_state.user_points})
+        st.success(f"You've redeemed {reward['name']}!")
+        st.balloons()
+    else:
+        st.error("Not enough points!")
+
+
+def render_sidebar():
+    with st.sidebar:
+        st.button("Logout", on_click=logout_user, key=st.session_state.logout_key)
+
+        st.markdown('<h3 class="sidebar-glow">LifeSync Stats</h3>', unsafe_allow_html=True)
+        st.metric("🏆 Streak", f"{st.session_state.streaks} days")
+        st.metric("💎 Points", st.session_state.user_points)
+
+        st.markdown('<h3 class="sidebar-glow">Daily Inspiration</h3>', unsafe_allow_html=True)
+        st.info(get_motivation_quote())
+
+        st.markdown('<h3 class="sidebar-glow">Productivity Tips</h3>', unsafe_allow_html=True)
+        st.info(random.choice(get_productivity_tips()))
+
+
 if __name__ == "__main__":
     main()
