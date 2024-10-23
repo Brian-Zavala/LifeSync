@@ -6,6 +6,8 @@ def css_styles():
      * {
         overflow-anchor: none !important;
         }
+        
+
 
     /* Base styles and imports */
     
@@ -292,19 +294,8 @@ def css_styles():
         100% { background-position: 0% 50%; }
     }
     
-    /* Custom Checkbox Styles */
-    input[type="checkbox"] {
-        appearance: none;
-        -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
-        border: 2px solid #ffffff;
-        border-radius: 50%;
-        outline: none;
-        transition: all 0.3s ease;
-        position: relative;
-        cursor: pointer;
-    }
+    
+
     
     input[type="checkbox"]:checked {
         background-color: #4CAF50;
@@ -313,10 +304,7 @@ def css_styles():
     
     input[type="checkbox"]:checked::before {
         content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        position: relative;
         color: #ffffff;
         font-size: 14px;
     }
@@ -407,19 +395,7 @@ def css_styles():
     .stTextInput > div > div::before,
     .stSelectbox > div > div::before,
     .stDateInput > div > div::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: conic-gradient(
-            from 0deg,
-            transparent 0%,
-            rgba(255, 0, 222, 0.8) 25%,
-            rgba(0, 255, 255, 0.8) 50%,
-            transparent 75%,
-            transparent 100%
+        display: none;
         );
         animation: rotate-glow 4s linear infinite;
         z-index: 0;
@@ -443,7 +419,6 @@ def css_styles():
     /* Custom Checkbox Styles */
     .stCheckbox {
         position: relative;
-        padding-left: 40px;
         cursor: pointer;
         font-size: 16px;
         user-select: none;
@@ -452,11 +427,9 @@ def css_styles():
     }
     
     .stCheckbox > label {
-        display: inline-block;
+        display: flex;
         position: relative;
-        padding-left: 40px;
         cursor: pointer;
-        line-height: 29px;
     }
     
     .stCheckbox > label::before {
@@ -667,26 +640,7 @@ def css_styles():
         });
     }
     
-    // Function to enhance widgets with dynamic effects
-    function enhanceWidgets() {
-        const widgets = document.querySelectorAll('.stTextInput > div > div > input, .stSelectbox > div > div > div, .stDateInput > div > div > input');
-    
-        widgets.forEach(widget => {
-            ['mouseenter', 'focus', 'touchstart'].forEach(event => {
-                widget.addEventListener(event, () => {
-                    widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.7), rgba(0, 255, 255, 0.7))';
-                    widget.classList.add('widget-glow');
-                });
-            });
-    
-            ['mouseleave', 'blur', 'touchend'].forEach(event => {
-                widget.addEventListener(event, () => {
-                    widget.style.background = 'linear-gradient(45deg, rgba(255, 0, 222, 0.3), rgba(0, 255, 255, 0.3))';
-                    widget.classList.remove('widget-glow');
-                });
-            });
-        });
-    }
+
     
     // Main function to run all custom scripts
     function runCustomScripts() {
