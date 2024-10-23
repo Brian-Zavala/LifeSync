@@ -233,7 +233,7 @@ def css_styles():
     }
     
     .st-bw:hover, .st-emotion-cache-16txtl3:hover {
-        transform: translateY(-5px);
+        transform: translateY(-6px) translateY(2px);
         box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
     }
     
